@@ -1,0 +1,31 @@
+doctype html
+html(lang="es")
+    head
+        link(rel="stylesheet", href="/css/main.css")
+        link(rel="stylesheet", href="/bootstrap/dist/css/bootstrap.min.css")
+        link(rel="stylesheet" href="/font-awesome/css/font-awesome.min.css")
+        script(src="/jquery/dist/jquery.min.js")
+        block head
+
+    body
+      .container
+        .col-sm-6.col-sm-offset-3
+          h1
+            span(class="fa fa-sign-in")
+            |  Iniciar sesión
+
+          if (error)
+            .alert.alert-danger
+              #{error}
+
+          form(action="/login" method="POST")
+            .form-group
+              label Usuario
+              input.form-control(type="text" name="user")
+            .form-group
+              label Contraseña
+              input.form-control(type="password" name="pass")
+            .btndiv
+              button.btn.btn-warning.btn-lg(type="submit") Entrar
+
+          hr
