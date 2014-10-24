@@ -61,6 +61,7 @@ app.use session {
     store: new mongoStore({
         # Usar la misma base de datos que las facturas y los usuarios
         url: config.mongoURL
+        db: 'laboptica'
         # Guardar los datos como JSON en lugar de texto plano en Mongo
         stringify: false
     })

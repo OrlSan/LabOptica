@@ -77,6 +77,7 @@ app.use(session({
   },
   store: new mongoStore({
     url: config.mongoURL,
+    db: 'laboptica',
     stringify: false
   })
 }));
