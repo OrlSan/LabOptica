@@ -51,7 +51,7 @@ app.use session {
         return uuid.v4()
     # El nombre de la cookie y el secreto
     name: 'FCiencias_Optica'
-    secret: 'SECRET password for a secure cookie'
+    secret: process.env.OPENSHIFT_SECRET_TOKEN or 'SECRET password for a secure cookie'
     saveUninitialized: true
     resave: true
     cookie:

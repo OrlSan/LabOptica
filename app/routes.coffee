@@ -39,7 +39,7 @@ isLoggedIn = (req, res, next) ->
     if req.isAuthenticated()
         return next()
     else
-        res.redirect '/login'
+        res.redirect '/'
 
 # Es lo mismo que la función anterior, pero esta regresa un JSON con un mensaje
 # de falla de inicio de sesión en lugar de redirigir la petición a la pantalla
