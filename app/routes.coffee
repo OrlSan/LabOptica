@@ -13,9 +13,25 @@ module.exports = (app, passport) ->
 
     # La pantalla de administración de la cuenta
     app.get '/dashboard', isLoggedIn, (req, res) ->
-        res.render 'dashboard.jade'
+        res.render 'dashboard.jade', req.user
 
-    # El proceso
+        # Procesamiento del formulario de inicio de sesión.
+    app.post '/login', passport.authenticate('local-login', {
+        successRedirect : '/dashboard'
+        failureRedirect : '/'
+    })
+
+    # La muestra, alta y edición de datos
+    app.get '/datos', isLoggedIn, (req, res) ->
+        res.render 'datos.jade', req.user
+
+
+    # Cerrar sesión
+    app.get '/logout', isLoggedIn, (req, res) ->
+        req.logout()
+        res.redirect '/'
+
+
 
 # Esta función regresa el estatus de la sesión actual y, si el
 # usuario no está autenticado lo redirige a la página de inicio.

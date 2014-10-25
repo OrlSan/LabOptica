@@ -13,8 +13,19 @@ module.exports = function(app, passport) {
       return res.render('index.jade');
     }
   });
-  return app.get('/dashboard', isLoggedIn, function(req, res) {
-    return res.render('dashboard.jade');
+  app.get('/dashboard', isLoggedIn, function(req, res) {
+    return res.render('dashboard.jade', req.user);
+  });
+  app.post('/login', passport.authenticate('local-login', {
+    successRedirect: '/dashboard',
+    failureRedirect: '/'
+  }));
+  app.get('/datos', isLoggedIn, function(req, res) {
+    return res.render('datos.jade', req.user);
+  });
+  return app.get('/logout', isLoggedIn, function(req, res) {
+    req.logout();
+    return res.redirect('/');
   });
 };
 

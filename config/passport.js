@@ -68,12 +68,13 @@ module.exports = function(passport) {
     });
   }));
   return passport.use('local-login', new LocalStrategy({
-    usernameField: 'email',
-    passwordField: 'password',
+    usernameField: 'user',
+    passwordField: 'pass',
     passReqToCallback: true
-  }, function(req, email, password, callback) {
+  }, function(req, name, password, callback) {
+    console.log("Recibida petición de inicio de sesión");
     return User.findOne({
-      'Correo': email
+      'User': name
     }, function(err, user) {
       if (err) {
         return callback(err);
@@ -82,6 +83,7 @@ module.exports = function(passport) {
         console.log('No hay un usuario que coincida');
         return callback(null, false, "No se encuentra el usuario registrado");
       } else {
+        console.log(user);
         return user.isValidPass(password, function(err, valid) {
           if (valid) {
             console.log('Password aceptado');

@@ -60,12 +60,13 @@ module.exports = (passport) ->
 
     # Autenticación de usuarios
     passport.use 'local-login', new LocalStrategy {
-        usernameField : 'email'
-        passwordField : 'password'
+        usernameField : 'user'
+        passwordField : 'pass'
         passReqToCallback : true
-    }, (req, email, password, callback) ->
+    }, (req, name, password, callback) ->
+        console.log "Recibida petición de inicio de sesión"
         # Buscamos el usuario cuyo correo nos fue proporcionado
-        User.findOne { 'Correo': email }, (err, user) ->
+        User.findOne { 'User': name }, (err, user) ->
             if err
                 return callback(err)
             if not user
@@ -74,6 +75,7 @@ module.exports = (passport) ->
             else
                 # Verificamos si el password proporcionado coincide con el Hash
                 # guardado en la base de datos.
+                console.log user
                 user.isValidPass password, (err, valid) ->
                     if valid
                         console.log 'Password aceptado'

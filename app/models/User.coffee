@@ -41,9 +41,9 @@ UserSchema.statics.genHash = (pass, callback) ->
             console.log err
             return callback("Error: Imposible guardar el password, por favor solicita ayuda técnica. Código 1.")
         else
-            bcrypt.hash pass, salt, (err2, hash) ->
+            bcrypt.hash pass, salt, (errHash, hash) ->
                 if err2
-                    console.log err2
+                    console.log "Hubo un error al Hasehar: #{errHash}"
                     return callback("Error: Imposible guardar el password, por favor solicita ayuda técnica. Código 2.")
                 else
                     return callback(null, hash)
@@ -59,12 +59,15 @@ UserSchema.methods.isValidPass = (pass, callback) ->
         else
             return callback(null, res)
 
+# Obtenemos si un usuario es administrador o no
 UserSchema.methods.isAdmin = () ->
     return this.Admin
 
+# Obtenemos si una cuenta está desactivada
 UserSchema.methods.isActive = () ->
     return this.Active
 
+# Activamos una cuenta
 UserSchema.methods.Activate = (callback) ->
     this.Active = true
     this.save (err) ->
@@ -74,5 +77,5 @@ UserSchema.methods.Activate = (callback) ->
         else
             return callback(false)
 
-
+# Exportamos el módulo para ser usado con Mongoose en el código Node
 module.exports = mongoose.model 'User', UserSchema

@@ -1,0 +1,38 @@
+extends layout
+block head
+    title Datos [LabOptica]
+
+block content
+    .container-fluid
+        div#maindiv(class="col-sm-6 col-sm-offset-3")
+            h2#title
+                span.fa.fa-database
+                |  Datos
+
+            .pantalla
+                p Cargando...
+
+            //- Template para la vista de los datos
+            script#dataTemplate(type="text/template").
+                <% if ( Mensaje ){ %>
+                    <div class="alert alert-warning"><%= Mensaje %></div>
+                <% } %>
+                <p><b>Número: </b><%= Number %></p>
+                <p><b>Género: </b><%= Gender %></p>
+                <p><b>Color: </b><%= Color %></p>
+                <p><b>Tinte: </b><%= Tinte %></p>
+                <p><b>Grosor: </b><%= Medida %>±<%= Incert %></p>
+
+    .loader
+        .div(style="padding-top: 25%;")
+            span.fa.fa-refresh.fa-spin.fa-5x
+    script.
+        $(window).load(function() {
+            $(".loader").fadeOut("slow");
+        })
+
+    //- Backbone y Underscorejs, para la aplicación, además
+    //- del programa de datos.
+    script(src="/underscore/underscore-min.js")
+    script(src="/backbone/backbone.js")
+    script(src="/js/datos.js")

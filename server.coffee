@@ -78,4 +78,4 @@ require('./app/routes')(app, passport)
 
 # Iniciar la aplicación ==============================================
 app.listen config.port, config.address, () ->
-    console.log 'Escuchando en el puerto ' + config.port
+    console.log "Escuchando en la dirección #{config.address}:#{config.port}"

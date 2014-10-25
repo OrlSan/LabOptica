@@ -1,0 +1,25 @@
+extends layout
+block head
+    title Mi cuenta [LabOptica]
+
+block content
+    .container-fluid
+        div#maindiv(class="col-sm-6 col-sm-offset-3")
+            h2#title
+                span.fa.fa-check-square-o
+                |  Bienvenid@, #{Nombre}
+
+            p
+                | Esta es la aplicación de base de datos para recolectar
+                | las muestras de cabello para ser medidas en el laboratorio
+                | de óptica.
+                br
+                | Si tienes alguna duda, encuentras algún error o crees que
+                | algo no va bien, por favor no dudes en comunicarte con
+                | Orlando mandándole un correo electrónico a
+                b  orlando.sanchez@grupojaque.com
+                br
+                | La respuesta no demorará más de 20 minutos y te agradeceremos
+                | que nos cuentes lo que pasa.
+                br
+                | ¡Gracias!

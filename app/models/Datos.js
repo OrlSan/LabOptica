@@ -37,6 +37,18 @@ DatosSchema = mongoose.Schema({
       required: true
     }
   },
+  Medida: {
+    type: Number,
+    index: {
+      required: true
+    }
+  },
+  Incert: {
+    type: Number,
+    index: {
+      required: true
+    }
+  },
   Vigente: {
     type: Boolean,
     "default": true

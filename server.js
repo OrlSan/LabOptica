@@ -91,5 +91,5 @@ app.locals.pretty = true;
 require('./app/routes')(app, passport);
 
 app.listen(config.port, config.address, function() {
-  return console.log('Escuchando en el puerto ' + config.port);
+  return console.log("Escuchando en la dirección " + config.address + ":" + config.port);
 });

@@ -5,6 +5,7 @@ html(lang="es")
         link(rel="stylesheet", href="/bootstrap/dist/css/bootstrap.min.css")
         link(rel="stylesheet" href="/font-awesome/css/font-awesome.min.css")
         script(src="/jquery/dist/jquery.min.js")
+        script(src="/bootstrap/dist/js/bootstrap.min.js")
         block head
 
     body
@@ -27,20 +28,21 @@ html(lang="es")
                     li
                         a(href='/datos')
                             span(class="fa fa-check")
-                            |  Facturar
+                            |  Datos
                     li.dropdown
                         a.dropdown-toggle(data-toggle="dropdown" href='#') Configuraciones
                             span.caret
                         ul.dropdown-menu(role="menu")
                             li
                                 a(href="/newPass") Cambiar contraseña
-                            li
-                                a(href="/newUser") Alta de usuario
+                            if (Admin)
+                                li
+                                    a(href="/newUser") Alta de usuario
                 ul.nav.navbar-nav.navbar-right(style="padding-right: 30px;")
                     li
                         a(href="/logout")
                             span(class="fa fa-sign-out")
-                            |  Salir
+                            |  Cerrar sesión
 
         //- Aquí va el contenido
         block content
