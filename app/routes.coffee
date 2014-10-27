@@ -32,6 +32,48 @@ module.exports = (app, passport) ->
     # a la ruta /datos.json
     app.use '/datos.json', apiRouter
 
+    # Cambiar la contraseña
+    app.get '/newPass', isLoggedIn, (req, res) ->
+        res.render 'newPass.jade'
+
+    app.post '/newPass', isLoggedIn, (req, res) ->
+        console.log "recibida petición post"
+        console.log req.body
+        User.findOne { _id: req.user.id }, (err, user) ->
+            if err
+                res.json {
+                    success: false
+                    message: "Hubo un error con tu sesión, por favor repórtalo e inténtalo de nuevo"
+                }
+            if user
+                user.isValidPass req.body.oldPass, (passErr, isValid) ->
+                    if passErr
+                        res.json {
+                            success: false
+                            message: "Hubo un error al procesar la contraseña. Pide ayuda e intenta de nuevo."
+                        }
+                    if isValid
+                        User.genHash req.body.newPass, (genErr, newHash) ->
+                            # Reemplazar el hash en la base de datos.
+                            user.Pass = newHash
+                            user.save (err) ->
+                                if err
+                                    console.log "Error al guardar: #{err}"
+                                    res.json {
+                                        success: false
+                                        message: 'No se pudo completar la operación. Pide ayuda.'
+                                    }
+                                else
+                                    res.json {
+                                        success: true
+                                        message: "El password fue actualizado correctamente."
+                                    }
+                    else
+                        res.json {
+                            success: false
+                            message: "Parece que tu password no es válido, verifícalo."
+                        }
+
     # Cerrar sesión
     app.get '/logout', isLoggedIn, (req, res) ->
         req.logout()

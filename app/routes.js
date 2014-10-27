@@ -26,6 +26,57 @@ module.exports = function(app, passport) {
     return res.render('datos.jade', req.user);
   });
   app.use('/datos.json', apiRouter);
+  app.get('/newPass', isLoggedIn, function(req, res) {
+    return res.render('newPass.jade');
+  });
+  app.post('/newPass', isLoggedIn, function(req, res) {
+    console.log("recibida petición post");
+    console.log(req.body);
+    return User.findOne({
+      _id: req.user.id
+    }, function(err, user) {
+      if (err) {
+        res.json({
+          success: false,
+          message: "Hubo un error con tu sesión, por favor repórtalo e inténtalo de nuevo"
+        });
+      }
+      if (user) {
+        return user.isValidPass(req.body.oldPass, function(passErr, isValid) {
+          if (passErr) {
+            res.json({
+              success: false,
+              message: "Hubo un error al procesar la contraseña. Pide ayuda e intenta de nuevo."
+            });
+          }
+          if (isValid) {
+            return User.genHash(req.body.newPass, function(genErr, newHash) {
+              user.Pass = newHash;
+              return user.save(function(err) {
+                if (err) {
+                  console.log("Error al guardar: " + err);
+                  return res.json({
+                    success: false,
+                    message: 'No se pudo completar la operación. Pide ayuda.'
+                  });
+                } else {
+                  return res.json({
+                    success: true,
+                    message: "El password fue actualizado correctamente."
+                  });
+                }
+              });
+            });
+          } else {
+            return res.json({
+              success: false,
+              message: "Parece que tu password no es válido, verifícalo."
+            });
+          }
+        });
+      }
+    });
+  });
   return app.get('/logout', isLoggedIn, function(req, res) {
     req.logout();
     return res.redirect('/');

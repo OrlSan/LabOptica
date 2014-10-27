@@ -1,0 +1,32 @@
+extends layout
+block head
+    title Mi cuenta [LabOptica]
+    script(src="/js/password.js")
+
+block content
+    .container-fluid
+        div#maindiv(class="col-sm-6 col-sm-offset-3")
+            h2#title
+                span.fa.fa-lock
+                |  Cambiar contraseña
+
+            .hidden-waning
+
+            form.form-horizontal#pass-form(action="/newPass" method="POST")
+                .form-group
+                    label Contraseña actual
+                    input.form-control#old(type="password")
+                .form-group
+                    label Nueva contraseña
+                    input.form-control#new(type="password")
+                .form-group
+                    label Repite la contraseña
+                    input.form-control#confirm(type="password")
+                .btndiv
+                    button.btn.btn-warning.btn-lg(type="submit") Cambiar
+
+            hr
+            p
+            | O si lo deseas, puedes
+            a(href="/dashboard") regresar
+            |  al inicio.

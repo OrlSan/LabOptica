@@ -51,7 +51,7 @@ UserSchema.statics.genHash = function(pass, callback) {
       return callback("Error: Imposible guardar el password, por favor solicita ayuda técnica. Código 1.");
     } else {
       return bcrypt.hash(pass, salt, function(errHash, hash) {
-        if (err2) {
+        if (errHash) {
           console.log("Hubo un error al Hasehar: " + errHash);
           return callback("Error: Imposible guardar el password, por favor solicita ayuda técnica. Código 2.");
         } else {
