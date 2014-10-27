@@ -28,10 +28,12 @@ DatosSchema = mongoose.Schema
             required: true
     Medida:
         type: Number
+        default: 0
         index:
             required: true
     Incert:
         type: Number
+        default: 0
         index:
             required: true
     Vigente:

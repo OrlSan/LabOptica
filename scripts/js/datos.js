@@ -11,7 +11,13 @@
  */
 
 (function() {
-  var ColMuestras, GetUrlParameter, GlobalView, Muestra, SingleDataView, col, globView;
+  var App, GetUrlParameter;
+
+  App = App || {
+    Views: {},
+    Models: {},
+    Collections: {}
+  };
 
   GetUrlParameter = function(sParam) {
     var item, sPageURL, sParameterName, sURLVariables, _i, _len;
@@ -26,7 +32,7 @@
     }
   };
 
-  Muestra = Backbone.Model.extend({
+  App.Models.Muestra = Backbone.Model.extend({
     idAttribute: '_id',
     initialize: function() {
       this.set('Mensaje', false);
@@ -34,27 +40,26 @@
     urlRoot: '/datos.json'
   });
 
-  ColMuestras = Backbone.Collection.extend({
-    model: Muestra,
+  App.Collections.ColMuestras = Backbone.Collection.extend({
+    model: App.Models.Muestra,
     className: 'list-group',
     tagname: 'li',
     lastDate: null,
     url: GetUrlParameter('date') ? '/datos.json?date=' + GetUrlParameter("date") : '/datos.json',
     initialize: function() {
-      console.log(this.url);
       this.fetch({
         async: false
       });
     }
   });
 
-  GlobalView = Backbone.View.extend({
+  App.Views.GlobalView = Backbone.View.extend({
     tagname: 'ul',
     className: 'list-group',
     render: function() {
       this.collection.each(function(data) {
         var singleView;
-        singleView = new SingleDataView({
+        singleView = new App.Views.SingleDataView({
           model: data
         });
         return this.$el.append(singleView.render().el);
@@ -62,11 +67,40 @@
       return this;
     },
     initialize: function(options) {
+      $('.addbtn').bind('click', this.addData);
       this.listenTo(this.collection, 'add remove', this.render);
+    },
+    addData: function() {
+      var muestra, properties;
+      properties = {
+        Number: $('#number').val(),
+        Gender: $('#gender').val(),
+        Color: $('#color').val(),
+        Tinte: $('#tinte').val()
+      };
+      console.log("Creando el modelo Muestra con las propiedades " + (JSON.stringify(properties)));
+      muestra = new App.Models.Muestra(properties);
+      console.log("Creando el modelo " + muestra);
+      console.log(muestra);
+      return muestra.save(properties, {
+        success: function(model, response, options) {
+          if (response.success) {
+            $('#number').val('');
+            $('#gender').val('hombre');
+            $('#color').val('castano');
+            $('#tinte').val('false');
+            return App.col.fetch({
+              async: false
+            });
+          } else {
+            return alert(response.message);
+          }
+        }
+      });
     }
   });
 
-  SingleDataView = Backbone.View.extend({
+  App.Views.SingleDataView = Backbone.View.extend({
     tagName: 'li',
     myTemplate: _.template($('#dataTemplate').html()),
     className: 'list-group-item',
@@ -79,15 +113,16 @@
     }
   });
 
-  col = new ColMuestras();
+  App.col = new App.Collections.ColMuestras();
 
-  globView = new GlobalView({
-    collection: col
+  App.globView = new App.Views.GlobalView({
+    collection: App.col
   });
 
-  $(".pantalla").html(globView.render().el);
+  $(".pantalla").html(App.globView.render().el);
 
   $('form').on('submit', function(event) {
+    console.log(App);
     return event.preventDefault();
   });
 

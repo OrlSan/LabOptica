@@ -8,6 +8,13 @@
 # (c) 2014, Orlando Rey Sánchez.
 ###
 
+# Creamos el Namespace de la aplicación
+App = App or {
+    Views: {}
+    Models: {}
+    Collections: {}
+}
+
 # GetUrlParameter, para obtener la URL
 GetUrlParameter = (sParam) ->
     sPageURL = window.location.search.substring(1)
@@ -18,7 +25,7 @@ GetUrlParameter = (sParam) ->
             return sParameterName[1];
 
 # El modelo de los datos
-Muestra = Backbone.Model.extend {
+App.Models.Muestra = Backbone.Model.extend {
     # El atributo ID es usado en Backbone para peticiones GET, POST, PUT y
     # DELETE. Por defecto no hay ninguno, pero con esta línea forzamos a que
     # Backbone use el _id asociado desde la aplicación en Mongo
@@ -37,37 +44,68 @@ Muestra = Backbone.Model.extend {
 }
 
 # La colección de los datos
-ColMuestras = Backbone.Collection.extend {
-    model: Muestra
+App.Collections.ColMuestras = Backbone.Collection.extend {
+    model: App.Models.Muestra
     className: 'list-group'
     tagname: 'li'
     lastDate: null
     url: if GetUrlParameter('date') then '/datos.json?date=' + GetUrlParameter("date") else '/datos.json'
     initialize: () ->
-        console.log this.url
         this.fetch({ async: false })
         return
 }
 
 # Un view para todas la colección de datos.
-GlobalView = Backbone.View.extend {
+App.Views.GlobalView = Backbone.View.extend {
     tagname: 'ul'
     className: 'list-group'
     render: () ->
         this.collection.each (data) ->
-            singleView = new SingleDataView({ model: data })
+            singleView = new App.Views.SingleDataView({ model: data })
             this.$el.append(singleView.render().el)
         , this
         return this
 
     initialize: (options) ->
+        # Escuchar por si agregan el elemento nuevo.
+        $('.addbtn').bind 'click', this.addData
+
         this.listenTo(this.collection, 'add remove', this.render)
         return
+
+
+    addData: () ->
+        properties = {
+            Number: $('#number').val()
+            Gender: $('#gender').val()
+            Color:  $('#color').val()
+            Tinte:  $('#tinte').val()
+        }
+
+        console.log "Creando el modelo Muestra con las propiedades #{JSON.stringify(properties)}"
+        muestra = new App.Models.Muestra(properties)
+
+        console.log "Creando el modelo #{muestra}"
+        console.log muestra
+
+        # Guardamos la muestra en el servidor
+        muestra.save(properties, {
+            success: (model, response, options) ->
+                if response.success
+                    # Borramos los datos y reiniciamos el formulario
+                    $('#number').val('')
+                    $('#gender').val('hombre')
+                    $('#color').val( 'castano' )
+                    $('#tinte').val('false')
+                    App.col.fetch({ async: false })
+                else
+                    alert response.message
+        })
+
 }
 
 # El view individual de los datos
-# El View individual de la factura
-SingleDataView = Backbone.View.extend {
+App.Views.SingleDataView = Backbone.View.extend {
     tagName: 'li'
     myTemplate: _.template( $('#dataTemplate').html() )
     className: 'list-group-item'
@@ -81,12 +119,13 @@ SingleDataView = Backbone.View.extend {
 }
 
 # creamos una instancia de la colección
-col = new ColMuestras()
+App.col = new App.Collections.ColMuestras()
 
 # Creamos un View nuevo de la colección
-globView = new GlobalView { collection: col }
+App.globView = new App.Views.GlobalView { collection: App.col }
 
-$(".pantalla").html globView.render().el
+$(".pantalla").html App.globView.render().el
 
 $('form').on 'submit', (event) ->
+    console.log App
     event.preventDefault()

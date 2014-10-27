@@ -9,6 +9,35 @@ block content
                 span.fa.fa-database
                 |  Datos
 
+            .newelement.form-horizontal
+                .form-group
+                    label Número de muestra
+                    input.form-control#number(type="text")
+                .row
+                    .col-md-4
+                        .form-group
+                            label.col-sm-3.control-label Género
+                            select.form-control#gender(name="genero")
+                                option(value="hombre") Hombre
+                                option(value="mujer") Mujer
+                    .col-md-4
+                        .form-group
+                            label.col-sm-3.control-label Color
+                            select.form-control#color(name="color")
+                                option(value="castano") Castaño
+                                option(value="negro") Negro
+                                option(value="rubio") Rubio
+                    .col-md-4
+                        .form-group
+                            label.col-sm-3.control-label Tinte
+                            select.form-control#tinte(name="tinte")
+                                option(value="false") No
+                                option(value="true") Sí
+                .form-group.btndiv
+                    button.btn.btn-success.addbtn Ingresar
+
+
+
             .pantalla
                 p Cargando...
 
@@ -17,11 +46,37 @@ block content
                 <% if ( Mensaje ){ %>
                     <div class="alert alert-warning"><%= Mensaje %></div>
                 <% } %>
-                <p><b>Número: </b><%= Number %></p>
-                <p><b>Género: </b><%= Gender %></p>
-                <p><b>Color: </b><%= Color %></p>
-                <p><b>Tinte: </b><%= Tinte %></p>
-                <p><b>Grosor: </b><%= Medida %>±<%= Incert %></p>
+                <div class="list-inline">
+                    <li class="disp-li"><p><b>Número: </b><%= Number %></p></li>
+                    <li><button class="btn btn-danger">Eliminar</button></li>
+                </div>
+                <div class="list-inline">
+                    <li><p><b>Género: </b>
+                        <% if (Gender === "hombre") { %>
+                            <i class="fa fa-male"></i>
+                        <% } else { %>
+                            <i class="fa fa-female"></i>
+                        <% } %>
+                    </p></li>
+                    <li><p><b>Color: </b>
+                    <% if (Color === "negro") { %>
+                        <div class="circle color-negro"></div>
+                    <% } if (Color === "castano") { %>
+                        <div class="circle color-castano"></div>
+                    <% } if (Color === "rubio") { %>
+                        <div class="circle color-rubio"></div>
+                    <% } %></p></li>
+                    <li><p><b>Tinte: </b>
+                        <% if (Tinte) { %>
+                            <i class="fa fa-check"></i>
+                        <% } else { %>
+                            <i class="fa fa-times"></i>
+                        <% } %>
+                    </p></li>
+                </div>
+                <% if ( Medida && Incert ){ %>
+                    <p><b>Grosor: </b><%= Medida %>±<%= Incert %></p>
+                <% } %>
 
     .loader
         .div(style="padding-top: 25%;")

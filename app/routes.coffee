@@ -2,6 +2,8 @@
 
 User = require './models/User'
 Datos = require './models/Datos'
+# Ruter para manejar las peticiones a la API
+apiRouter = require './api'
 
 module.exports = (app, passport) ->
     # Página de inicio
@@ -25,6 +27,10 @@ module.exports = (app, passport) ->
     app.get '/datos', isLoggedIn, (req, res) ->
         res.render 'datos.jade', req.user
 
+
+    # Usamos el Router de la aplicación para manejar todas las peticiones
+    # a la ruta /datos.json
+    app.use '/datos.json', apiRouter
 
     # Cerrar sesión
     app.get '/logout', isLoggedIn, (req, res) ->
