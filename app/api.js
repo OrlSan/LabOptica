@@ -10,6 +10,9 @@
  * El Router crea, actualiza, borra y manda toda la información a
  * la aplicación Backbone en el frontend para interactuar con el
  * usuario.
+ *
+ * Con los datos que no estén vigentes no haremos nada por el momento,
+ * pero queda a reserva revisarlos para ver cuáles han sido borrados.
  */
 var Datos, express, router;
 
@@ -73,7 +76,8 @@ router.post('/', function(req, res) {
           } else {
             return res.json({
               success: true,
-              message: "La información se guardó correctamente"
+              message: "La información se guardó correctamente",
+              model: muestra
             });
           }
         });
@@ -85,6 +89,54 @@ router.post('/', function(req, res) {
       message: "Debes introducir un número válido para la muestra."
     });
   }
+});
+
+router.put('/:id', function(req, res) {
+  console.log(req.params.id);
+  return Datos.findOne({
+    _id: id
+  }, function(err, doc) {
+    return res.json({
+      success: true,
+      message: "Completada la operación"
+    });
+  });
+});
+
+router["delete"]('/:id', function(req, res) {
+  console.log("Anulando el registro con el ID " + req.params.id);
+  return Datos.findOne({
+    _id: req.params.id
+  }, function(err, registro) {
+    if (err) {
+      console.log("Ocurrió un error al bucar el registro " + req.params.id + ": " + err);
+      res.json({
+        success: false,
+        message: 'Error interno, reintenta por favor.'
+      });
+    }
+    if (registro) {
+      registro.Vigente = false;
+      return registro.save(function(saveErr) {
+        if (saveErr) {
+          return res.json({
+            success: false,
+            message: "No se puede guardar el cambio en la base de datos, por favor pide ayuda."
+          });
+        } else {
+          return res.json({
+            success: true,
+            message: "El registro se anuló satisfactoriamente."
+          });
+        }
+      });
+    } else {
+      return res.json({
+        success: false,
+        message: "No podemos encontrar el registro que quieres anular, por favor pide ayuda."
+      });
+    }
+  });
 });
 
 router.use(function(req, res, next) {

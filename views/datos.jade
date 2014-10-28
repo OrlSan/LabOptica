@@ -58,14 +58,19 @@ block content
                             <i class="fa fa-female"></i>
                         <% } %>
                     </p></li>
-                    <li><p><b>Color: </b>
-                    <% if (Color === "negro") { %>
-                        <div class="circle color-negro"></div>
-                    <% } if (Color === "castano") { %>
-                        <div class="circle color-castano"></div>
-                    <% } if (Color === "rubio") { %>
-                        <div class="circle color-rubio"></div>
-                    <% } %></p></li>
+                    <li>
+                        <ul class="list-inline">
+                            <li><p><b>Color: </b></li>
+                            <li>
+                            <% if (Color === "negro") { %>
+                                <div class="circle color-negro"></div>
+                            <% } if (Color === "castano") { %>
+                                <div class="circle color-castano"></div>
+                            <% } if (Color === "rubio") { %>
+                                <div class="circle color-rubio"></div>
+                            <% } %></p></li>
+                        </ul>
+                    </li>
                     <li><p><b>Tinte: </b>
                         <% if (Tinte) { %>
                             <i class="fa fa-check"></i>

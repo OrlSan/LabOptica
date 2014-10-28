@@ -1,4 +1,10 @@
+###
 # app/routes.coffee -> app/routes.js
+#
+# Rutas del servidor para la aplicación LabOptica, rutas
+# que responden las peticiones web para interactuar con el
+# frontend.
+###
 
 User = require './models/User'
 Datos = require './models/Datos'
@@ -17,7 +23,7 @@ module.exports = (app, passport) ->
     app.get '/dashboard', isLoggedIn, (req, res) ->
         res.render 'dashboard.jade', req.user
 
-        # Procesamiento del formulario de inicio de sesión.
+    # Procesamiento del formulario de inicio de sesión.
     app.post '/login', passport.authenticate('local-login', {
         successRedirect : '/dashboard'
         failureRedirect : '/'
@@ -28,8 +34,8 @@ module.exports = (app, passport) ->
         res.render 'datos.jade', req.user
 
 
-    # Usamos el Router de la aplicación para manejar todas las peticiones
-    # a la ruta /datos.json
+    # Usamos el Router de la aplicación para manejar todas las
+    # peticiones a la ruta /datos.json
     app.use '/datos.json', apiRouter
 
     # Cambiar la contraseña

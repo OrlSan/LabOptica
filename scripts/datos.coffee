@@ -24,6 +24,7 @@ GetUrlParameter = (sParam) ->
         if (sParameterName[0] == sParam)
             return sParameterName[1];
 
+
 # El modelo de los datos
 App.Models.Muestra = Backbone.Model.extend {
     # El atributo ID es usado en Backbone para peticiones GET, POST, PUT y
@@ -32,8 +33,8 @@ App.Models.Muestra = Backbone.Model.extend {
     # Para borrar, por ejemplo, se emite una petición DELETE a como
     # DELETE /datos.json/5437c6f7978584181abb82c5
     idAttribute: '_id'
+
     initialize: () ->
-        # console.log "Creando la factura " + JSON.stringify(this.attributes)
         this.set('Mensaje', false)
         return
 
@@ -70,7 +71,7 @@ App.Views.GlobalView = Backbone.View.extend {
         # Escuchar por si agregan el elemento nuevo.
         $('.addbtn').bind 'click', this.addData
 
-        this.listenTo(this.collection, 'add remove', this.render)
+        # this.listenTo(this.collection, 'add remove', this.render)
         return
 
 
@@ -82,11 +83,7 @@ App.Views.GlobalView = Backbone.View.extend {
             Tinte:  $('#tinte').val()
         }
 
-        console.log "Creando el modelo Muestra con las propiedades #{JSON.stringify(properties)}"
         muestra = new App.Models.Muestra(properties)
-
-        console.log "Creando el modelo #{muestra}"
-        console.log muestra
 
         # Guardamos la muestra en el servidor
         muestra.save(properties, {
@@ -97,9 +94,10 @@ App.Views.GlobalView = Backbone.View.extend {
                     $('#gender').val('hombre')
                     $('#color').val( 'castano' )
                     $('#tinte').val('false')
-                    App.col.fetch({ async: false })
+                    App.col.add(response.model)
                 else
                     alert response.message
+                    App.col.reset()
         })
 
 }
@@ -116,6 +114,33 @@ App.Views.SingleDataView = Backbone.View.extend {
     render: () ->
         this.$el.html this.myTemplate(this.model.attributes)
         return this
+
+    events: {
+        'click .btn-danger': 'deleteData'
+        'click .btn-info': 'updateDate'
+    }
+
+    deleteData: () ->
+        console.log "Borrando el registro con el ID #{this.model.get('_id')}"
+        # Comenzamos la petición de destrucción
+        this.model.destroy {
+            success: (model, response, options) ->
+                # Eliminamos el atributo que pide la cancelación
+                if response.success
+                    model.set('Mensaje', response.message)
+                    model.set('Vigente', false)
+                    App.col.remove(model)
+                else
+                    console.log "No se pudo eliminar: #{response.message}"
+                    model.set('Mensaje', response.message)
+                return
+
+            error: (model, xhr, options) ->
+                console.log xhr
+                model.set('Mensaje', 'Hubo un error de comunicación. Recarga la página.')
+                return
+        }
+        return
 }
 
 # creamos una instancia de la colección
@@ -127,5 +152,5 @@ App.globView = new App.Views.GlobalView { collection: App.col }
 $(".pantalla").html App.globView.render().el
 
 $('form').on 'submit', (event) ->
-    console.log App
+    App.col = new App.Collections.ColMuestras()
     event.preventDefault()

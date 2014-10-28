@@ -68,7 +68,6 @@
     },
     initialize: function(options) {
       $('.addbtn').bind('click', this.addData);
-      this.listenTo(this.collection, 'add remove', this.render);
     },
     addData: function() {
       var muestra, properties;
@@ -78,10 +77,7 @@
         Color: $('#color').val(),
         Tinte: $('#tinte').val()
       };
-      console.log("Creando el modelo Muestra con las propiedades " + (JSON.stringify(properties)));
       muestra = new App.Models.Muestra(properties);
-      console.log("Creando el modelo " + muestra);
-      console.log(muestra);
       return muestra.save(properties, {
         success: function(model, response, options) {
           if (response.success) {
@@ -89,11 +85,10 @@
             $('#gender').val('hombre');
             $('#color').val('castano');
             $('#tinte').val('false');
-            return App.col.fetch({
-              async: false
-            });
+            return App.col.add(response.model);
           } else {
-            return alert(response.message);
+            alert(response.message);
+            return App.col.reset();
           }
         }
       });
@@ -110,6 +105,29 @@
     render: function() {
       this.$el.html(this.myTemplate(this.model.attributes));
       return this;
+    },
+    events: {
+      'click .btn-danger': 'deleteData',
+      'click .btn-info': 'updateDate'
+    },
+    deleteData: function() {
+      console.log("Borrando el registro con el ID " + (this.model.get('_id')));
+      this.model.destroy({
+        success: function(model, response, options) {
+          if (response.success) {
+            model.set('Mensaje', response.message);
+            model.set('Vigente', false);
+            App.col.remove(model);
+          } else {
+            console.log("No se pudo eliminar: " + response.message);
+            model.set('Mensaje', response.message);
+          }
+        },
+        error: function(model, xhr, options) {
+          console.log(xhr);
+          model.set('Mensaje', 'Hubo un error de comunicación. Recarga la página.');
+        }
+      });
     }
   });
 
@@ -122,7 +140,7 @@
   $(".pantalla").html(App.globView.render().el);
 
   $('form').on('submit', function(event) {
-    console.log(App);
+    App.col = new App.Collections.ColMuestras();
     return event.preventDefault();
   });
 

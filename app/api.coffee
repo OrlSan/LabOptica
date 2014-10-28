@@ -8,6 +8,9 @@
 # El Router crea, actualiza, borra y manda toda la información a
 # la aplicación Backbone en el frontend para interactuar con el
 # usuario.
+#
+# Con los datos que no estén vigentes no haremos nada por el momento,
+# pero queda a reserva revisarlos para ver cuáles han sido borrados.
 ###
 
 # Cargamos Express y generamos una instancia del Router.
@@ -70,12 +73,56 @@ router.post '/', (req, res) ->
                         res.json {
                             success: true
                             message: "La información se guardó correctamente"
+                            model: muestra
                         }
     else
         res.json {
             success: false
             message: "Debes introducir un número válido para la muestra."
         }
+
+router.put '/:id', (req, res) ->
+    console.log req.params.id
+    # No es necesario buscar un registro vigente, pues los que no estén vigentes
+    # no pueden ser obtenidos vía la API en la ruta /datos.json.
+    Datos.findOne { _id: id }, (err, doc) ->
+        res.json {
+            success: true
+            message: "Completada la operación"
+        }
+
+
+router.delete '/:id', (req, res) ->
+    console.log "Anulando el registro con el ID #{req.params.id}"
+    Datos.findOne { _id: req.params.id }, (err, registro) ->
+        if err
+            console.log "Ocurrió un error al bucar el registro #{req.params.id}: #{err}"
+            res.json {
+                success: false
+                message: 'Error interno, reintenta por favor.'
+            }
+        # Si la búsqueda en la base de datos da un resultado, lo modificamos.
+        if registro
+            # Cambiamos el estatus del registro para anularlo.
+            registro.Vigente = false
+            # Guardamos el registro en la base de datos con los cambios.
+            registro.save (saveErr) ->
+                if saveErr
+                    res.json {
+                        success: false
+                        message: "No se puede guardar el cambio en la base de datos, por favor pide ayuda."
+                    }
+                else
+                    res.json {
+                        success: true
+                        message: "El registro se anuló satisfactoriamente."
+                    }
+        # Si no se encuentra un registro con ese ID
+        else
+            res.json {
+                success: false
+                message: "No podemos encontrar el registro que quieres anular, por favor pide ayuda."
+            }
 
 
 # Middleware para verificar si el usuario está autenticado y, de
