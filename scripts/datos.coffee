@@ -117,8 +117,18 @@ App.Views.SingleDataView = Backbone.View.extend {
 
     events: {
         'click .btn-danger': 'deleteData'
-        'click .btn-info': 'updateDate'
+        'click .btn-primary': 'updateData'
+        'change input#medida': 'setMedida'
+        'change input#incert': 'setIncert'
     }
+
+    setMedida: (e) ->
+        value = $(e.currentTarget).val()
+        this.model.set('Medida', value)
+
+    setIncert: (e) ->
+        value = $(e.currentTarget).val()
+        this.model.set('Incert', value)
 
     deleteData: () ->
         console.log "Borrando el registro con el ID #{this.model.get('_id')}"
@@ -141,6 +151,19 @@ App.Views.SingleDataView = Backbone.View.extend {
                 return
         }
         return
+
+    updateData: () ->
+        console.log "Actualizando el registro #{JSON.stringify(this.model.attributes)}"
+        this.model.save this.model.attributes, {
+            success: (model, response, options) ->
+                console.log response
+                model.set('Mensaje', response.message)
+            error: (model, xhr, options) ->
+                console.log xhr
+                model.set('Mensaje', 'Hubo un error de comunicación. Recarga la página.')
+        }
+        return
+
 }
 
 # creamos una instancia de la colección

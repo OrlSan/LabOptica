@@ -92,14 +92,32 @@ router.post('/', function(req, res) {
 });
 
 router.put('/:id', function(req, res) {
-  console.log(req.params.id);
+  console.log(req.body);
   return Datos.findOne({
-    _id: id
-  }, function(err, doc) {
-    return res.json({
-      success: true,
-      message: "Completada la operación"
-    });
+    _id: req.params.id
+  }, function(searchErr, registro) {
+    if (searchErr) {
+      return res.json({
+        success: false,
+        message: "Hubo un error al buscar en la base de datos. Pide ayuda."
+      });
+    } else {
+      registro.Medida = req.body.Medida;
+      registro.Incert = req.body.Incert;
+      return registro.save(function(saveErr) {
+        if (saveErr) {
+          return res.json({
+            success: false,
+            message: "Hubo un error al guardar la información. Pide ayuda."
+          });
+        } else {
+          return res.json({
+            success: true,
+            message: "La información se actualizó correctamente."
+          });
+        }
+      });
+    }
   });
 });
 

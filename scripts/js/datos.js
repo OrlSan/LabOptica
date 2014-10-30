@@ -108,7 +108,19 @@
     },
     events: {
       'click .btn-danger': 'deleteData',
-      'click .btn-info': 'updateDate'
+      'click .btn-primary': 'updateData',
+      'change input#medida': 'setMedida',
+      'change input#incert': 'setIncert'
+    },
+    setMedida: function(e) {
+      var value;
+      value = $(e.currentTarget).val();
+      return this.model.set('Medida', value);
+    },
+    setIncert: function(e) {
+      var value;
+      value = $(e.currentTarget).val();
+      return this.model.set('Incert', value);
     },
     deleteData: function() {
       console.log("Borrando el registro con el ID " + (this.model.get('_id')));
@@ -126,6 +138,19 @@
         error: function(model, xhr, options) {
           console.log(xhr);
           model.set('Mensaje', 'Hubo un error de comunicación. Recarga la página.');
+        }
+      });
+    },
+    updateData: function() {
+      console.log("Actualizando el registro " + (JSON.stringify(this.model.attributes)));
+      this.model.save(this.model.attributes, {
+        success: function(model, response, options) {
+          console.log(response);
+          return model.set('Mensaje', response.message);
+        },
+        error: function(model, xhr, options) {
+          console.log(xhr);
+          return model.set('Mensaje', 'Hubo un error de comunicación. Recarga la página.');
         }
       });
     }

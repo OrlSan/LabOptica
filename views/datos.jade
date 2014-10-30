@@ -44,7 +44,7 @@ block content
             //- Template para la vista de los datos
             script#dataTemplate(type="text/template").
                 <% if ( Mensaje ){ %>
-                    <div class="alert alert-warning"><%= Mensaje %></div>
+                    <div class="alert alert-info"><%= Mensaje %></div>
                 <% } %>
                 <div class="list-inline">
                     <li class="disp-li"><p><b>Número: </b><%= Number %></p></li>
@@ -79,9 +79,21 @@ block content
                         <% } %>
                     </p></li>
                 </div>
-                <% if ( Medida && Incert ){ %>
-                    <p><b>Grosor: </b><%= Medida %>±<%= Incert %></p>
-                <% } %>
+                <div class="list-inline">
+                    <li>
+                        <p><b>Grosor: </b></p>
+                    </li>
+                    <li>
+                        <input type="text" value="<%= Medida %>" id="medida" class="form-control" class="data-input">
+                    </li>
+                    <li>&#177;</li>
+                    <li>
+                        <input type="text" value="<%= Incert %>" id="incert" class="form-control" class="data-input">
+                    </li>
+                    <li>
+                        <button class="btn btn-primary"><i class="fa fa-check"></i> Ok</button>
+                    </li>
+                </div>
 
     .loader
         .div(style="padding-top: 25%;")

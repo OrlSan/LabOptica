@@ -82,14 +82,30 @@ router.post '/', (req, res) ->
         }
 
 router.put '/:id', (req, res) ->
-    console.log req.params.id
+    console.log req.body
     # No es necesario buscar un registro vigente, pues los que no estén vigentes
     # no pueden ser obtenidos vía la API en la ruta /datos.json.
-    Datos.findOne { _id: id }, (err, doc) ->
-        res.json {
-            success: true
-            message: "Completada la operación"
-        }
+    Datos.findOne { _id: req.params.id }, (searchErr, registro) ->
+        if searchErr
+            res.json {
+                success: false
+                message: "Hubo un error al buscar en la base de datos. Pide ayuda."
+            }
+        else
+            registro.Medida = req.body.Medida
+            registro.Incert = req.body.Incert
+            # Una vez cambiadas las propiedades por las nuevas, guardamos en mongo
+            registro.save (saveErr) ->
+                if saveErr
+                    res.json {
+                        success: false
+                        message: "Hubo un error al guardar la información. Pide ayuda."
+                    }
+                else
+                    res.json {
+                        success: true
+                        message: "La información se actualizó correctamente."
+                    }
 
 
 router.delete '/:id', (req, res) ->
