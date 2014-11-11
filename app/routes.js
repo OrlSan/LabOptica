@@ -85,6 +85,28 @@ module.exports = function(app, passport) {
       }
     });
   });
+  app.get('/descarga.csv', isLoggedIn, function(req, res) {
+    console.log("Recibida petición de descarga");
+    return Datos.find({
+      "Vigente": true
+    }, function(err, data) {
+      var csv, item, _i, _len;
+      if (err) {
+        console.log("Hubo un error buscando");
+        return res.json({
+          error: "No se pudo buscar en la base de datos"
+        });
+      } else {
+        csv = "Numero, Genero, Color, Tinte, Medida, Incert\n";
+        for (_i = 0, _len = data.length; _i < _len; _i++) {
+          item = data[_i];
+          csv += "" + item.Number + ", " + item.Gender + ", " + item.Color + ", " + item.Tinte + "," + item.Medida + ", " + item.Incert + "\n";
+        }
+        res.set('Content-Type', 'application/octet-stream');
+        return res.send(csv);
+      }
+    });
+  });
   return app.get('/logout', isLoggedIn, function(req, res) {
     req.logout();
     return res.redirect('/');

@@ -8,6 +8,15 @@ block content
             h2#title
                 span.fa.fa-check-square-o
                 |  Bienvenid@, #{Nombre}
+                
+            div.alert.alert-info
+                p
+                    | Ahora ya puedes descargar los datos de todos, tal y como
+                    |  están en la base de datos actualmente. Si hay modificaciones,
+                    |  se reflejarán de inmediato en cuanto descargues el archivo. Sólo
+                    |  dale click y puedes tenerlo.
+                    br
+                    a(href="/descarga.csv") Descarga los datos
 
             p
                 | Esta es la aplicación de base de datos para recolectar

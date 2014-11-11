@@ -80,6 +80,22 @@ module.exports = (app, passport) ->
                             message: "Parece que tu password no es válido, verifícalo."
                         }
 
+    # Descarga de los datos como CSV
+    app.get '/descarga.csv', (isLoggedIn), (req, res) ->
+        console.log "Recibida petición de descarga"
+        Datos.find { "Vigente": true }, (err, data) ->
+            if err
+                console.log "Hubo un error buscando"
+                res.json { error: "No se pudo buscar en la base de datos" }
+            else
+                csv = "Numero, Genero, Color, Tinte, Medida, Incert\n"
+                for item in data
+                    csv += "#{item.Number}, #{item.Gender}, #{item.Color}, #{item.Tinte},#{item.Medida}, #{item.Incert}\n"
+
+                res.set 'Content-Type', 'application/octet-stream'
+                res.send csv
+
+
     # Cerrar sesión
     app.get '/logout', isLoggedIn, (req, res) ->
         req.logout()
