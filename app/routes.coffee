@@ -83,14 +83,16 @@ module.exports = (app, passport) ->
     # Descarga de los datos como CSV
     app.get '/descarga.csv', (isLoggedIn), (req, res) ->
         console.log "Recibida petición de descarga"
-        Datos.find { "Vigente": true }, (err, data) ->
+        Datos.find { "Vigente": true }
+        .sort { "Number": 1 }
+        .exec (err, data) ->
             if err
                 console.log "Hubo un error buscando"
                 res.json { error: "No se pudo buscar en la base de datos" }
             else
-                csv = "Numero, Genero, Color, Tinte, Medida, Incert\n"
+                csv = "Numero,Genero,Color,Tinte,Medida,Incert\n"
                 for item in data
-                    csv += "#{item.Number}, #{item.Gender}, #{item.Color}, #{item.Tinte},#{item.Medida}, #{item.Incert}\n"
+                    csv += "#{item.Number},#{item.Gender},#{item.Color},#{item.Tinte},#{item.Medida},#{item.Incert}\n"
 
                 res.set 'Content-Type', 'application/octet-stream'
                 res.send csv

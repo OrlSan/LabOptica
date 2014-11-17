@@ -89,7 +89,9 @@ module.exports = function(app, passport) {
     console.log("Recibida petición de descarga");
     return Datos.find({
       "Vigente": true
-    }, function(err, data) {
+    }).sort({
+      "Number": 1
+    }).exec(function(err, data) {
       var csv, item, _i, _len;
       if (err) {
         console.log("Hubo un error buscando");
@@ -97,10 +99,10 @@ module.exports = function(app, passport) {
           error: "No se pudo buscar en la base de datos"
         });
       } else {
-        csv = "Numero, Genero, Color, Tinte, Medida, Incert\n";
+        csv = "Numero,Genero,Color,Tinte,Medida,Incert\n";
         for (_i = 0, _len = data.length; _i < _len; _i++) {
           item = data[_i];
-          csv += "" + item.Number + ", " + item.Gender + ", " + item.Color + ", " + item.Tinte + "," + item.Medida + ", " + item.Incert + "\n";
+          csv += "" + item.Number + "," + item.Gender + "," + item.Color + "," + item.Tinte + "," + item.Medida + "," + item.Incert + "\n";
         }
         res.set('Content-Type', 'application/octet-stream');
         return res.send(csv);
