@@ -24,7 +24,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git@bitbucket.org:OrlSan/cloudfactura.git"
+        "url": "https://github.com/OrlSan/LabOptica.git"
      },
     "engines": {
         "node": ">= 0.10.0",
